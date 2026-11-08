@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Something went wrong · Goodhand{% endblock %}
+{% block content %}
+<section class="result-wrap">
+  <div class="result-icon result-icon-warn">!</div>
+  <p class="eyebrow">SERVER ERROR</p>
+  <h1>Something went wrong.</h1>
+  <p class="lede">The request could not be completed. Please try again in a moment.</p>
+  <a class="button button-primary" href="{{ url_for('public.home') }}">Return to home</a>
+</section>
+{% endblock %}

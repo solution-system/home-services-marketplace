@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}My jobs · Goodhand{% endblock %}
+{% block content %}
+<section class="workspace">
+  <div class="workspace-head">
+    <div>
+      <p class="eyebrow">SERVICE PROVIDER</p>
+      <h1>My jobs</h1>
+      <p class="lede">Jobs assigned to {{ current_user.display_name }}, newest first.</p>
+    </div>
+    <div class="stat"><strong>{{ total_assigned }}</strong><span>assigned job{{ "" if total_assigned == 1 else "s" }}</span></div>
+  </div>
+
+  <form class="card filter-bar" method="get" action="{{ url_for('provider.jobs') }}">
+    <div class="filter-field">
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="">All statuses</option>
+        {% for status in statuses %}
+          <option value="{{ status }}"{% if status == selected_status %} selected{% endif %}>{{ status }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="button button-primary" type="submit">Apply filter</button>
+      {% if selected_status %}<a class="text-link" href="{{ url_for('provider.jobs') }}">Clear</a>{% endif %}
+    </div>
+  </form>
+
+  {% if requests %}
+    <div class="job-grid">
+      {% for item in requests %}
+        <article class="card job-card">
+          <div class="job-top">
+            <a class="ref-code row-link" href="{{ url_for('provider.job_detail', request_id=item.id) }}">{{ item.reference }}</a>
+            <span class="status-pill status-{{ item.status|lower|replace(' ', '-') }}">{{ item.status }}</span>
+          </div>
+          <h2><a href="{{ url_for('provider.job_detail', request_id=item.id) }}">{{ item.customer_name }}</a></h2>
+          <p>{{ item.description }}</p>
+          <dl class="job-meta">
+            <div><dt>Service</dt><dd>{{ category_labels.get(item.category, item.category|title) }}</dd></div>
+            <div><dt>Area</dt><dd>{{ item.service_area }}</dd></div>
+            <div><dt>Preferred date</dt><dd>{{ item.requested_date.strftime("%b %-d, %Y") }}</dd></div>
+            <div><dt>Contact</dt><dd>{{ item.customer_phone }}</dd></div>
+            <div><dt>Submitted</dt><dd>{{ item.created_at.strftime("%b %-d, %Y · %H:%M UTC") }}</dd></div>
+          </dl>
+          <a class="text-link job-link" href="{{ url_for('provider.job_detail', request_id=item.id) }}">View job details →</a>
+        </article>
+      {% endfor %}
+    </div>
+    <p class="result-count">Showing {{ requests|length }} of {{ total_assigned }} assigned job{{ "" if total_assigned == 1 else "s" }}.</p>
+  {% elif total_assigned == 0 %}
+    <div class="card empty-state">
+      <strong>No jobs assigned to you yet.</strong>
+      <p>When an administrator assigns a request to you, it will appear here.</p>
+    </div>
+  {% else %}
+    <div class="card empty-state">
+      <strong>No jobs match this filter.</strong>
+      <p>Try a different status.</p>
+      <a class="text-link" href="{{ url_for('provider.jobs') }}">Clear filter</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

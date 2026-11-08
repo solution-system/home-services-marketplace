@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Page not found · Goodhand{% endblock %}
+{% block content %}
+<section class="result-wrap">
+  <div class="result-icon result-icon-warn">?</div>
+  <p class="eyebrow">PAGE NOT FOUND</p>
+  <h1>{{ description or "We couldn’t find that page." }}</h1>
+  <p class="lede">The link may be out of date. You can start a new request or track an existing one from the home page.</p>
+  <a class="button button-primary" href="{{ url_for('public.home') }}">Return to home</a>
+</section>
+{% endblock %}

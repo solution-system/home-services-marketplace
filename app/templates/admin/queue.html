@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Admin queue · Goodhand{% endblock %}
+{% block content %}
+<section class="workspace">
+  <div class="workspace-head">
+    <div>
+      <p class="eyebrow">ADMINISTRATOR</p>
+      <h1>Request queue</h1>
+      <p class="lede">Every customer request, newest first.</p>
+    </div>
+    <div class="stat"><strong>{{ total_count }}</strong><span>total request{{ "" if total_count == 1 else "s" }}</span></div>
+  </div>
+
+  <form class="card filter-bar" method="get" action="{{ url_for('admin.queue') }}">
+    <div class="filter-field">
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="">All statuses</option>
+        {% for status in statuses %}
+          <option value="{{ status }}"{% if status == selected_status %} selected{% endif %}>{{ status }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-field">
+      <label for="category">Service type</label>
+      <select id="category" name="category">
+        <option value="">All services</option>
+        {% for key, label in categories.items() %}
+          <option value="{{ key }}"{% if key == selected_category %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-field filter-search">
+      <label for="q">Search</label>
+      <input id="q" name="q" value="{{ search }}" placeholder="Reference or customer name">
+    </div>
+    <div class="filter-actions">
+      <button class="button button-primary" type="submit">Apply filters</button>
+      {% if filters_active %}<a class="text-link" href="{{ url_for('admin.queue') }}">Clear</a>{% endif %}
+    </div>
+  </form>
+
+  {% if requests %}
+    <div class="card table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Reference</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Service</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="col-provider">Provider</th>
+            <th scope="col">Submitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in requests %}
+            <tr>
+              <td><a class="ref-code row-link" href="{{ url_for('admin.request_detail', request_id=item.id) }}">{{ item.reference }}</a></td>
+              <td><a class="customer-link" href="{{ url_for('admin.request_detail', request_id=item.id) }}"><strong>{{ item.customer_name }}</strong><small>{{ item.service_area }}</small></a></td>
+              <td>{{ category_labels.get(item.category, item.category|title) }}</td>
+              <td><span class="status-pill status-{{ item.status|lower|replace(' ', '-') }}">{{ item.status }}</span></td>
+              <td class="col-provider">{{ item.assigned_provider.display_name if item.assigned_provider else "—" }}</td>
+              <td><time datetime="{{ item.created_at.isoformat() }}">{{ item.created_at.strftime("%b %-d, %Y") }}<small>{{ item.created_at.strftime("%H:%M") }} UTC</small></time></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="result-count">Showing {{ requests|length }} of {{ total_count }} request{{ "" if total_count == 1 else "s" }}.</p>
+  {% elif total_count == 0 %}
+    <div class="card empty-state">
+      <strong>No requests yet.</strong>
+      <p>New customer requests will appear here as soon as they are submitted.</p>
+    </div>
+  {% else %}
+    <div class="card empty-state">
+      <strong>No requests match these filters.</strong>
+      <p>Try a different status, service type, or search term.</p>
+      <a class="text-link" href="{{ url_for('admin.queue') }}">Clear filters</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Request a service · Goodhand{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy"><p class="eyebrow">HOME HELP, MADE SIMPLE</p><h1>Good work starts<br>with a clear request.</h1><p class="lede">Tell us what you need. Our local team will review your request and coordinate the next step.</p><div class="trust-line"><span class="trust-dot"></span> One request. A clear update. No chasing.</div></div>
+  <div class="hero-art" aria-hidden="true"><div class="sun"></div><div class="house"><div class="roof"></div><div class="house-body"><div class="window"></div><div class="door"></div></div></div><div class="plant plant-one"></div><div class="plant plant-two"></div></div>
+</section>
+<section class="content-grid">
+  <div class="intro"><p class="eyebrow">GET STARTED</p><h2>Tell us about the job</h2><p>Share a few details and we’ll give you a reference number to track your request.</p><div class="steps"><div><span>01</span><p><strong>Send your request</strong><br>Tell us what needs attention.</p></div><div><span>02</span><p><strong>We coordinate</strong><br>Our team reviews and assigns it.</p></div><div><span>03</span><p><strong>Stay informed</strong><br>Use your reference to check progress.</p></div></div></div>
+  <form class="card form-card" method="post" action="{{ url_for('public.create_request') }}" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="form-heading"><div><p class="eyebrow">SERVICE REQUEST</p><h2>How can we help?</h2></div><span class="form-index">01 / 01</span></div>
+    <div class="form-row">{{ form.customer_name.label }}{{ form.customer_name(placeholder="e.g. Samira Khan", autocomplete="name") }}{% for e in form.customer_name.errors %}<small class="error">{{ e }}</small>{% endfor %}</div>
+    <div class="form-row">{{ form.customer_email.label }}{{ form.customer_email(placeholder="you@example.com", autocomplete="email") }}{% for e in form.customer_email.errors %}<small class="error">{{ e }}</small>{% endfor %}</div>
+    <div class="form-row">{{ form.customer_phone.label }}{{ form.customer_phone(placeholder="Phone number", autocomplete="tel") }}{% for e in form.customer_phone.errors %}<small class="error">{{ e }}</small>{% endfor %}</div>
+    <div class="form-split"><div class="form-row">{{ form.category.label }}{{ form.category() }}{% for e in form.category.errors %}<small class="error">{{ e }}</small>{% endfor %}</div><div class="form-row">{{ form.requested_date.label }}{{ form.requested_date() }}{% for e in form.requested_date.errors %}<small class="error">{{ e }}</small>{% endfor %}</div></div>
+    <div class="form-row">{{ form.service_area.label }}{{ form.service_area(placeholder="Neighbourhood or area") }}{% for e in form.service_area.errors %}<small class="error">{{ e }}</small>{% endfor %}</div>
+    <div class="form-row">{{ form.description.label }}{{ form.description(rows="4", placeholder="What needs to be fixed, installed, or cleaned?") }}{% for e in form.description.errors %}<small class="error">{{ e }}</small>{% endfor %}</div>
+    <p class="privacy-note">Your details are used to coordinate this request and verify status lookups.</p>
+    {{ form.submit(class_="button button-primary") }}
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8f5">
+  <title>{% block title %}Goodhand Home Services{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('public.home') }}"><span class="brand-mark">G</span><span>goodhand<span class="brand-sub">HOME SERVICES</span></span></a>
+    <nav aria-label="Main navigation">
+      <a href="{{ url_for('public.home') }}">Request service</a>
+      <a href="{{ url_for('public.lookup') }}">Track a request</a>
+      {% if current_user.is_authenticated %}
+        {% if current_user.is_admin %}<a href="{{ url_for('admin.queue') }}">Admin queue</a>{% endif %}
+        {% if current_user.is_provider %}<a href="{{ url_for('provider.jobs') }}">My jobs</a>{% endif %}
+        <span class="nav-user">{{ current_user.display_name }}</span>
+        <form class="nav-logout" method="post" action="{{ url_for('auth.logout') }}">{{ logout_form.hidden_tag() }}<button type="submit" class="link-button">Sign out</button></form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Staff sign in</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack" role="status">
+          {% for category, message in messages %}
+            <p class="flash flash-{{ category }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer><span>Goodhand Home Services</span><span>Local service, clearly coordinated.</span></footer>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Render Blueprint for Goodhand.
+#
+# Free Render web service + free Neon Postgres. Do not use Render's free
+# Postgres: it expires 30 days after creation. Neon's free plan is permanent.
+#
+# Deploy from the Render Dashboard: New -> Blueprint -> connect this repo.
+# Render prompts for DATABASE_URL; paste the Neon pooled connection string.
+
+services:
+  - type: web
+    name: goodhand
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install -r requirements.txt
+    # Render's free plan has no shell or one-off jobs, so migrations and the
+    # idempotent demo seed run at boot. seed-demo exits early once data exists.
+    startCommand: 'python -m flask --app app:create_app db upgrade && if [ "$SEED_DEMO" = "1" ]; then python -m flask --app app:create_app seed-demo; fi && gunicorn wsgi:application --workers 1 --threads 4 --timeout 120'
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.1
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: SEED_DEMO
+        value: "1"
+      # Set in the Render Dashboard to the Neon pooled connection string.
+      - key: DATABASE_URL
+        sync: false
