@@ -51,6 +51,8 @@ Render free web service  ──►  Neon free Postgres
 - 5 GB network transfer per project per month.
 - Permanent free plan, no credit card.
 - Keep the Neon project in the same region as the Render service when possible.
+- Don't use an uptime pinger to keep Render awake. It burns Neon compute hours;
+  the free database only has 100 CU-hours per month.
 
 ## 1. Push the project to GitHub
 
@@ -206,6 +208,12 @@ Add `?sslmode=require` to the end of the Neon connection string.
 Re-copy the **pooled** connection string from Neon. Check that the password was
 not truncated and that the project is not suspended for exceeding its free
 limits.
+
+### Migrations fail through the pooled connection
+
+Run migrations with Neon's **direct** (non-pooler) connection string, then switch
+`DATABASE_URL` back to the pooled string. Both strings are available under
+**Connect** in the Neon console.
 
 ### 502 or deploy stuck at "starting"
 
