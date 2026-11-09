@@ -67,6 +67,8 @@ Rebuild the sample data at any time with `flask --app app:create_app seed-demo -
 
 ## Deploy for free on Render
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/solution-system/home-services-marketplace)
+
 The app deploys as a **Render free web service** with a **Neon free Postgres**
 database. That combination costs $0/month, gives you HTTPS and a custom domain,
 and keeps the data when Render spins the app down.
